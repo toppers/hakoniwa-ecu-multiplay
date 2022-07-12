@@ -1,0 +1,47 @@
+version: "3"
+services:
+  pub:
+    build: .
+    tty: true
+    privileged: true
+    environment:
+      - ROS_NODE=pub
+      - ROS_IP=192.168.11.3
+      - ROS_MASTER_URI=http://192.168.11.4:11311
+    networks:
+      base_network:
+        ipv4_address: 192.168.11.3
+    volumes:
+      - "./mnt:/mnt"
+  sub:
+    build: .
+    tty: true
+    privileged: true
+    environment:
+      - ROS_NODE=sub
+      - ROS_IP=192.168.11.2
+      - ROS_MASTER_URI=http://192.168.11.4:11311
+    networks:
+      base_network:
+        ipv4_address: 192.168.11.2
+    volumes:
+      - "./mnt:/mnt"
+  master:
+    build: .
+    tty: true
+    privileged: true
+    environment:
+      - ROS_NODE=mster
+      - ROS_IP=192.168.11.4
+    networks:
+      base_network:
+        ipv4_address: 192.168.11.4
+    volumes:
+      - "./mnt:/mnt"
+networks:
+  base_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.11.0/24
