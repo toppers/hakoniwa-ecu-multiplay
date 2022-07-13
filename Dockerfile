@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
 	curl \
 	net-tools \
 	netcat \
+	openjdk-8-jre \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -47,8 +48,23 @@ WORKDIR	/root/athrill-target-rh850f1x/build_linux
 RUN make
 ENV PATH /root/athrill-target-rh850f1x/athrill/bin/linux:${PATH}
 
+WORKDIR /root
+RUN wget https://github.com/mitsut/cfg/releases/download/1.9.7/cfg-1.9.7-x86_64-unknown-linux-gnu.tar.gz && \
+	wget https://www.autosar.org/fileadmin/user_upload/standards/classic/4-0/AUTOSAR_MMOD_XMLSchema.zip && \
+	mkdir schema && \
+	tar xvzf cfg-1.9.7-x86_64-unknown-linux-gnu.tar.gz && \
+	mv cfg schema/ && \
+	unzip AUTOSAR_MMOD_XMLSchema.zip -d schema
 
 RUN mkdir -p /root/workspace
 WORKDIR /root/workspace
 ENV RUBYOPT -EUTF-8
 
+# RUN git clone https://github.com/toppers/atk2-sc1.git && \
+RUN git clone https://github.com/mikoto2000/toppers-atk2-sc1.git atk2-sc1 && \
+	wget https://www.toppers.jp/download.cgi/a-rtegen-1.4.0.tar.gz && \
+	tar xvzf a-rtegen-1.4.0.tar.gz && \
+	rm a-rtegen-1.4.0.tar.gz && \
+	mkdir -p atk2-sc1/cfg/cfg && \
+	cp /root/schema/* atk2-sc1/cfg/cfg/ && \
+	cp /root/schema/*.xsd a-rtegen/bin/schema/
