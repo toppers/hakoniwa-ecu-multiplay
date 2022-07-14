@@ -60,8 +60,7 @@ RUN mkdir -p /root/workspace
 WORKDIR /root/workspace
 ENV RUBYOPT -EUTF-8
 
-# RUN git clone https://github.com/toppers/atk2-sc1.git && \
-RUN git clone https://github.com/mikoto2000/toppers-atk2-sc1.git atk2-sc1 && \
+RUN git clone --depth=1 https://github.com/toppers/atk2-sc1.git && \
 	wget https://www.toppers.jp/download.cgi/a-rtegen-1.4.0.tar.gz && \
 	tar xvzf a-rtegen-1.4.0.tar.gz && \
 	rm a-rtegen-1.4.0.tar.gz && \
