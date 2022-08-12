@@ -42,6 +42,7 @@ RUN	tar xzvf athrill-gcc.tar.gz && \
 ENV PATH /root/athrill-gcc-package/usr/local/athrill-gcc/bin/:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-master/:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-cmd/:${PATH}
+ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy:${PATH}
 
 WORKDIR /root
 RUN git clone -b hako --recursive https://github.com/toppers/athrill-target-rh850f1x.git
@@ -77,8 +78,13 @@ RUN git clone --depth=1 https://github.com/toppers/atk2-sc1.git && \
 	cp /root/schema/* atk2-sc1/cfg/cfg/ && \
 	cp /root/schema/*.xsd a-rtegen/bin/schema/
 
-ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy:${PATH}
 WORKDIR /root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
+RUN cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 RUN make can
 RUN make
 COPY config/proxy_config.json /root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
+
+WORKDIR /root/athrill-target-rh850f1x/hakoniwa-ros2pdu/workspace
+RUN bash build.bash
+ENV HAKO_WS_ROS	/root/athrill-target-rh850f1x/hakoniwa-ros2pdu/workspace
+ENV HAKO_WS_CAN	/root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample
