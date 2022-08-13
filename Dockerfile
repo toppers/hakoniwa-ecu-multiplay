@@ -62,9 +62,7 @@ ENV RUBYOPT -EUTF-8
 
 RUN git clone --depth=1 https://github.com/toppers/atk2-sc1.git && \
 	git clone -b target/v1.4.0 --depth=1 https://github.com/toppers/a-comstack && \
-	wget https://www.toppers.jp/download.cgi/a-rtegen-1.4.0.tar.gz && \
-	tar xvzf a-rtegen-1.4.0.tar.gz && \
-	rm a-rtegen-1.4.0.tar.gz && \
+	git clone --depth=1 https://github.com/toppers/a-rtegen.git && \
 	mkdir -p atk2-sc1/cfg/cfg && \
 	cp /root/schema/* atk2-sc1/cfg/cfg/ && \
 	cp /root/schema/*.xsd a-rtegen/bin/schema/
