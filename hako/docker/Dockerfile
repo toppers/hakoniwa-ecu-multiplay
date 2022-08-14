@@ -71,9 +71,7 @@ ENV RUBYOPT -EUTF-8
 
 RUN git clone --depth=1 https://github.com/toppers/atk2-sc1.git && \
 	git clone -b target/v1.4.0 --depth=1 https://github.com/toppers/a-comstack && \
-	wget https://www.toppers.jp/download.cgi/a-rtegen-1.4.0.tar.gz && \
-	tar xvzf a-rtegen-1.4.0.tar.gz && \
-	rm a-rtegen-1.4.0.tar.gz && \
+	git clone https://github.com/toppers/a-rtegen.git && \
 	mkdir -p atk2-sc1/cfg/cfg && \
 	cp /root/schema/* atk2-sc1/cfg/cfg/ && \
 	cp /root/schema/*.xsd a-rtegen/bin/schema/
@@ -83,6 +81,7 @@ RUN cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 RUN make can
 RUN make
 COPY config/proxy_config.json /root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
+COPY config/proxy_config_rte.json /root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1/
 
 WORKDIR /root/athrill-target-rh850f1x/hakoniwa-ros2pdu/workspace
 RUN bash build.bash
