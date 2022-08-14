@@ -43,15 +43,15 @@ ENV PATH /root/athrill-gcc-package/usr/local/athrill-gcc/bin/:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-master/:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-cmd/:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy:${PATH}
-
-WORKDIR /root
-RUN git clone -b hako --recursive https://github.com/toppers/athrill-target-rh850f1x.git
-WORKDIR	/root/athrill-target-rh850f1x
-RUN bash build.bash all
 ENV PATH /root/athrill-target-rh850f1x/athrill/bin/linux:${PATH}
 
 WORKDIR /root
 RUN git clone https://github.com/toppers/athrill-device.git
+RUN git clone -b hako --recursive https://github.com/toppers/athrill-target-rh850f1x.git
+WORKDIR	/root/athrill-target-rh850f1x
+RUN bash build.bash all
+
+WORKDIR /root
 RUN mv athrill-device athrill-target-rh850f1x/
 WORKDIR	/root/athrill-target-rh850f1x/athrill-device/device/hakotime
 RUN ln -s ../../../hakoniwa-core-cpp-client
@@ -81,9 +81,22 @@ RUN cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 RUN make can
 RUN make
 COPY config/proxy_config.json /root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
-COPY config/proxy_config_rte.json /root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1/
+COPY config/proxy_config_rte_ecu1.json /root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1/
+COPY config/proxy_config_rte_ecu2.json /root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu2/
+
+WORKDIR /root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1
+RUN bash configure.sh
+RUN make
+RUN cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+
+WORKDIR /root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu2
+RUN bash configure.sh
+RUN make
+RUN cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 
 WORKDIR /root/athrill-target-rh850f1x/hakoniwa-ros2pdu/workspace
 RUN bash build.bash
-ENV HAKO_WS_ROS	/root/athrill-target-rh850f1x/hakoniwa-ros2pdu/workspace
-ENV HAKO_WS_CAN	/root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample
+ENV HAKO_WS_ROS		/root/athrill-target-rh850f1x/hakoniwa-ros2pdu/workspace
+ENV HAKO_WS_ECU1	/root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1
+ENV HAKO_WS_ECU2	/root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu2
+ENV HAKO_WS_CAN		/root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample
