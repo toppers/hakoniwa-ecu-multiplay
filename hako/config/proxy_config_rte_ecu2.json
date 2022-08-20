@@ -4,11 +4,13 @@
     "target_bin_path": "/root/athrill-target-rh850f1x/athrill/bin/linux/athrill2",
     "target_options": [
         "-c1",
-        "-i",
+        "-t",
+        "-1",
         "-d",
         "device_config_with_rte_hako_ecu2.txt",
         "-m",
         "memory_with_hako.txt",
         "atk2-sc1"
-    ]
+    ],
+    "suppress_start_feedback": true
 }

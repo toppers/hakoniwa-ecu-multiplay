@@ -40,10 +40,10 @@ RUN	tar xzvf athrill-gcc.tar.gz && \
 	rm -f athrill-gcc-package.tar.gz && \
 	rm -f *.tar.gz
 ENV PATH /root/athrill-gcc-package/usr/local/athrill-gcc/bin/:${PATH}
+ENV PATH /root/athrill-target-rh850f1x/athrill/bin/linux:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-master/:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-cmd/:${PATH}
 ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy:${PATH}
-ENV PATH /root/athrill-target-rh850f1x/athrill/bin/linux:${PATH}
 
 WORKDIR /root
 RUN git clone https://github.com/toppers/athrill-device.git
