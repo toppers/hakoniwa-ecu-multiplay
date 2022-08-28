@@ -3,9 +3,10 @@
 
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 	"build": {
-		"dockerfile": "../Dockerfile",
+		"dockerfile": "../hako/docker/Dockerfile",
 		// [Optional] You can use build args to set options. e.g. 'VARIANT' below affects the image in the Dockerfile
-		"args": { "VARIANT": "buster" }
+		"context": "../hako/",	
+		"args": { "VARIANT": "buster" }	
 	},
 
 	// Set *default* container specific settings.json values on container create.
@@ -14,13 +15,13 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-vscode.cpptools"
-	]
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "uname -a",
+	"postCreateCommand": "ln -s /root/workspace/a-rtegen a-rtegen && ln -s /root/workspace/atk2-sc1 atk2-sc1 && ln -s /root/workspace/a-comstack a-comstack"
 
 	// Uncomment to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
