@@ -47,7 +47,7 @@ ENV PATH /root/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/
 
 WORKDIR /root
 RUN git clone https://github.com/toppers/athrill-device.git
-RUN git clone -b hako --recursive https://github.com/toppers/athrill-target-rh850f1x.git
+RUN git clone --recursive https://github.com/toppers/athrill-target-rh850f1x.git
 WORKDIR	/root/athrill-target-rh850f1x
 RUN bash build.bash all
 
