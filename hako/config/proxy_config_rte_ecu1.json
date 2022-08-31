@@ -1,0 +1,16 @@
+{
+    "asset_name": "athrill_test_node1",
+    "target_exec_dir": "/root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1",
+    "target_bin_path": "/root/athrill-target-rh850f1x/athrill/bin/linux/athrill2",
+    "target_options": [
+        "-c1",
+        "-t",
+        "-1",
+        "-d",
+        "device_config_with_rte_hako_ecu1.txt",
+        "-m",
+        "memory_with_hako.txt",
+        "atk2-sc1"
+    ],
+    "suppress_start_feedback": true
+}

@@ -1,0 +1,14 @@
+{
+    "asset_name": "athrill_test_node",
+    "target_exec_dir": "/root/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample",
+    "target_bin_path": "/root/athrill-target-rh850f1x/athrill/bin/linux/athrill2",
+    "target_options": [
+        "-c1",
+        "-i",
+        "-d",
+        "device_config_with_can_hako.txt",
+        "-m",
+        "memory_with_hako.txt",
+        "atk2-sc1.exe"
+    ]
+}
