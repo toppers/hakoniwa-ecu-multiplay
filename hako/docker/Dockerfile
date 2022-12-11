@@ -59,7 +59,7 @@ RUN bash build.bash
 
 WORKDIR /root
 RUN wget https://github.com/mitsut/cfg/releases/download/1.9.7/cfg-1.9.7-x86_64-unknown-linux-gnu.tar.gz && \
-	wget https://www.autosar.org/fileadmin/user_upload/standards/classic/4-0/AUTOSAR_MMOD_XMLSchema.zip && \
+	wget --no-check-certificate https://www.autosar.org/fileadmin/standards/classic/4-0/AUTOSAR_MMOD_XMLSchema.zip && \
 	mkdir schema && \
 	tar xvzf cfg-1.9.7-x86_64-unknown-linux-gnu.tar.gz && \
 	mv cfg schema/ && \
