@@ -3,10 +3,10 @@
 
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 	"build": {
-		"dockerfile": "../hako/docker/Dockerfile",
+		"dockerfile": "Dockerfile"
 		// [Optional] You can use build args to set options. e.g. 'VARIANT' below affects the image in the Dockerfile
-		"context": "../hako/",	
-		"args": { "VARIANT": "buster" }	
+		// "context": "../hako/",	
+		// "args": { "VARIANT": "buster" }	
 	},
 
 	// Set *default* container specific settings.json values on container create.
