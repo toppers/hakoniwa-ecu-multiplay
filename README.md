@@ -2,6 +2,48 @@
 
 複数の車載ECUを箱庭（仮想シミュレーション）環境で動作させるための環境です。
 以下では、2つのECU間でCAN通信を行う
+
+## ECU間通信の例（C++版箱庭コア機能）
+詳細手順はTOPPERS活用アイデア・アプリケーション開発コンテストの[ドキュメント](https://www.toppers.jp/docs/contest/2022/A01_mori.pdf)を参照（）
+
+### 仮想ランタイム環境とCANデータの流れ
+```mermaid
+graph LR;
+
+    subgraph ECU1
+        e1[TOPPERS AUTOSAR STACKS]
+        e2[RH850 Athrill]
+        e3[Athrill CAN Device]
+    end
+
+    subgraph ECU2
+        i1[TOPPERS AUTOSAR STACKS]
+        i2[RH850 Athrill]
+        i3[Athrill CAN Device]
+    end
+
+    subgraph CAN Monitor Proxy
+        proxy[ROS2 Node]
+    end
+
+    subgraph CAN Monitor
+        monitor[ROS2 Node]
+    end
+
+    subgraph Hakoniwa Core
+        hako1[PDU CAN DATA ]
+        hako2[Simulation Timer Synchronizer]
+
+    end
+
+
+e3 --> hako1
+hako1 --> i3
+hako1 --> proxy
+proxy --> |ROS2 topic| monitor
+
+```
+
 ## ATK2 Sample1のビルド方法
 
 ```
