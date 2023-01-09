@@ -1,7 +1,7 @@
 {
     "asset_name": "athrill_test_node1",
-    "target_exec_dir": "/root/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1",
-    "target_bin_path": "/root/athrill-target-rh850f1x/athrill/bin/linux/athrill2",
+    "target_exec_dir": "/home/hako/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1",
+    "target_bin_path": "/home/toppers/athrill-target-rh850f1x/athrill/bin/linux/athrill2",
     "target_options": [
         "-c1",
         "-t",
