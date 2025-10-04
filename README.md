@@ -50,7 +50,7 @@ proxy --> |ROS2 topic| monitor
 cd ~/workspace/atk2-sc1/
 mkdir OBJ ;cd OBJ
 ../configure -T hsbrh850f1k_gcc
-cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+cp /home/toppers/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 make
 
 ```
@@ -81,7 +81,7 @@ Input Command:
 ## A-COMSTACKを使ったCAN通信の例 : ビルド方法
 ```
 cd a-comstack/can/target/hsbrh850f1k_gcc/sample/
-cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+cp /home/toppers/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 make can
 make
 ```
@@ -120,7 +120,7 @@ started core service [/rosout]
 ### ターミナル２ (ROS TOPIC)
 - Step1 running rostopic
 ```
-source /opt/ros/melodic/setup.bash
+source /opt/ros/foxy/setup.bash
 rostopic echo /channel0/CAN_IDE0_RTR0_DLC8_0x001
 WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x001] does not appear to be published yet
 ```

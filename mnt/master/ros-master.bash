@@ -1,5 +1,11 @@
 #!/bin/bash
 
-source /opt/ros/melodic/setup.bash
+source /opt/ros/foxy/setup.bash
 
-roscore
+# ROS2 does not require roscore
+# The ROS2 daemon will start automatically when needed
+ros2 daemon start
+
+# Keep the script running
+echo "ROS2 daemon started. Press Ctrl+C to stop."
+tail -f /dev/null
