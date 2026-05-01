@@ -3,25 +3,36 @@
 
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 	"build": {
-		"dockerfile": "Dockerfile"
-		// [Optional] You can use build args to set options. e.g. 'VARIANT' below affects the image in the Dockerfile
-		// "context": "../hako/",	
-		// "args": { "VARIANT": "buster" }	
+		"dockerfile": "Dockerfile",
+		"args": {
+			"HAKONIWA_VERSION": "v1.2.0"
+		}
+		// To use the version from latest_version.txt, run: bash .devcontainer/build.sh
+		// Or update HAKONIWA_VERSION above manually
 	},
-
-	// Set *default* container specific settings.json values on container create.
-	"settings": {},
-
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"ms-vscode.cpptools"
-	],
+	"features": {
+		"docker-in-docker": "latest"
+	},
+	// VS Code specific customizations
+	"customizations": {
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {},
+			
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.cmake-tools"
+			]
+		}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack",
+	"postCreateCommand": "ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack"
 
 	// Uncomment to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
@@ -30,5 +41,5 @@
 	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
 
 	// Comment out to connect as root instead. To add a non-root user, see: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "hako"
+	// "remoteUser": "root"
 }
