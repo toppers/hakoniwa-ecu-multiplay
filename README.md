@@ -80,7 +80,7 @@ Input Command:
 
 ## A-COMSTACKを使ったCAN通信の例 : ビルド方法
 ```
-cd a-comstack/can/target/hsbrh850f1k_gcc/sample/
+cd ~/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
 cp /home/toppers/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 make can
 make
@@ -150,7 +150,7 @@ data: "\t\n\v\f\r\x0E\x0F\x10"
 ### ターミナル３ (CAN Application using TOPPERS Automotive Stacks)
 - Step1 Run athrill
 ```
-cd a-comstack/can/target/hsbrh850f1k_gcc/sample/
+cd ~/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
 athrill2 -c1 -i -d device_config_with_can.txt -m memory.txt atk2-sc1.exe
 core id num=1
 ROM : START=0x0 SIZE=1024
