@@ -11,6 +11,7 @@ on:
 
 jobs:
   build-and-push:
+    if: github.event_name != 'delete'
     runs-on: ubuntu-latest
     permissions:
       contents: read
