@@ -36,7 +36,7 @@ jobs:
         run: |
           set -e
           cd hako
-          export DOCKER_BUILD_ARGS="--cache-from type=gha --cache-to type=gha,mode=max"
+          export DOCKER_BUILD_ARGS="--load --cache-from type=gha --cache-to type=gha,mode=max"
           bash docker/create-image.bash
           echo "✓ Successfully built ghcr.io/toppers/hakoniwa-ecu-multiplay:$(cat appendix/latest_version.txt)"
 
