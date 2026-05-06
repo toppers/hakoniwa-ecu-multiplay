@@ -113,14 +113,41 @@ docker login ghcr.io
 
 ### 7. 自動ビルド・プッシュ (GitHub Actions)
 
-git タグを作成すると、GitHub Actions が自動的にイメージをビルドして GHCR にプッシュします：
+**運用方針：**
+
+- 全ブランチでコンテナイメージをビルド（GitHub Actions）
+- git タグ（`v*.*.*`）作成時のみ GHCR にプッシュしてリリース
+- 他のブランチと PR ではビルド成功の確認のみ
+- `hako/appendix/latest_version.txt` が version の source of truth
+
+**リリース手順：**
+
+1. バージョンを更新
 
 ```bash
-git tag v1.2.0
-git push origin v1.2.0
+cd hako
+echo "v1.3.0" > appendix/latest_version.txt
+git add appendix/latest_version.txt
+git commit -m "Bump version to v1.3.0"
+git push origin main
 ```
 
-これにより `ghcr.io/toppers/hakoniwa-ecu-multiplay:v1.2.0` が自動的に作成・プッシュされます。
+1. タグを作成・プッシュ（リポジトリメンテナーのみ）
+
+```bash
+git tag v1.3.0
+git push origin v1.3.0
+```
+
+1. GitHub Actions が自動実行
+
+`ghcr.io/toppers/hakoniwa-ecu-multiplay:v1.3.0` が作成・プッシュされます
+
+**注意：**
+
+- 全ブランチと PR で GitHub Actions によるビルドが自動実行されます
+- GHCR へのプッシュは `v*.*.*` タグ作成時のみ
+- タグ作成前に `latest_version.txt` と一致していることを確認してください
 
 ## Dockerイメージについて
 

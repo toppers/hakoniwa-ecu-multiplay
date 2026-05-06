@@ -2,8 +2,12 @@ name: Build and Push Container Image
 
 on:
   push:
-    tags:
-      - 'v*'
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
 
 jobs:
   build-and-push:
@@ -16,30 +20,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Build image
+        run: |
+          set -e
+          cd hako
+          bash docker/create-image.bash
+          echo "✓ Successfully built ghcr.io/toppers/hakoniwa-ecu-multiplay:$(cat appendix/latest_version.txt)"
+
       - name: Log in to GitHub Container Registry
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract version from tag
-        id: version
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/}
-          # Validate version format (vX.Y.Z)
-          if ! [[ $VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid version format: $VERSION. Expected vX.Y.Z"
-            exit 1
-          fi
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "Building and pushing image: $VERSION"
-
-      - name: Build and push image
+      - name: Push image to GHCR
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           set -e
           cd hako
-          echo "${{ steps.version.outputs.VERSION }}" > appendix/latest_version.txt
-          bash docker/create-image.bash
           bash docker/push-image.bash
-          echo "✓ Successfully built and pushed ghcr.io/toppers/hakoniwa-ecu-multiplay:${{ steps.version.outputs.VERSION }}"
+          echo "✓ Successfully pushed ghcr.io/toppers/hakoniwa-ecu-multiplay:$(cat appendix/latest_version.txt)"
