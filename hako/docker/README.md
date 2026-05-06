@@ -115,9 +115,9 @@ docker login ghcr.io
 
 **運用方針：**
 
-- 全ブランチでコンテナイメージをビルド（GitHub Actions）
+- 各ブランチへの push ではコンテナイメージをビルド（GitHub Actions）
 - git タグ（`v*.*.*`）作成時のみ GHCR にプッシュしてリリース
-- 他のブランチと PR ではビルド成功の確認のみ
+- PR は `main` 向けの場合のみビルド成功を確認
 - `hako/appendix/latest_version.txt` が version の source of truth
 
 **リリース手順：**
