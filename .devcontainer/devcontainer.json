@@ -5,10 +5,9 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
+			"IMAGE_REGISTRY": "ghcr.io/toppers",
 			"HAKONIWA_VERSION": "v1.2.0"
 		}
-		// To use the version from latest_version.txt, run: bash .devcontainer/build.sh
-		// Or update HAKONIWA_VERSION above manually
 	},
 	"features": {
 		"docker-in-docker": "latest"
@@ -18,7 +17,7 @@
 		"vscode": {
 			// Set *default* container specific settings.json values on container create.
 			"settings": {},
-			
+
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
 				"ms-vscode.cpptools",
@@ -32,7 +31,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack"
+	"postCreateCommand": "VERSION=$(cat /workspace/hako/appendix/latest_version.txt) && ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack && echo \"Using HAKONIWA version: $VERSION\""
 
 	// Uncomment to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
