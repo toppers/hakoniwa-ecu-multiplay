@@ -9,9 +9,6 @@ on:
       - opened
       - synchronize
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -21,14 +18,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Build image
-        run: |
-          set -e
-          cd hako
-          bash docker/create-image.bash
-          echo "✓ Successfully built ghcr.io/toppers/hakoniwa-ecu-multiplay:$(cat appendix/latest_version.txt)"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
         if: startsWith(github.ref, 'refs/tags/v')
@@ -37,6 +30,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image with cache
+        run: |
+          set -e
+          cd hako
+          export DOCKER_BUILD_ARGS="--cache-from type=gha --cache-to type=gha,mode=max"
+          bash docker/create-image.bash
+          echo "✓ Successfully built ghcr.io/toppers/hakoniwa-ecu-multiplay:$(cat appendix/latest_version.txt)"
 
       - name: Push image to GHCR
         if: startsWith(github.ref, 'refs/tags/v')
