@@ -15,7 +15,7 @@
 ### PowerShellスクリプト (Windows用)
 
 - **create-image.ps1** - Dockerイメージを構築するPowerShellスクリプト
-- **push-image.ps1** - GHCR にイメージをプッシュするPowerShellスクリプト
+- **push-image.ps1** - DockerイメージをプッシュするPowerShellスクリプト（現在の実装は Linux/macOS 用スクリプトと異なり、GHCR 向けログインや `appendix/latest_version.txt` を使ったバージョンタグ付けを前提としていません）
 
 ### 設定ファイル
 
