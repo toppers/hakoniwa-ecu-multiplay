@@ -1,0 +1,45 @@
+name: Build and Push Container Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          # Validate version format (vX.Y.Z)
+          if ! [[ $VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: $VERSION. Expected vX.Y.Z"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building and pushing image: $VERSION"
+
+      - name: Build and push image
+        run: |
+          set -e
+          cd hako
+          echo "${{ steps.version.outputs.VERSION }}" > appendix/latest_version.txt
+          bash docker/create-image.bash
+          bash docker/push-image.bash
+          echo "✓ Successfully built and pushed ghcr.io/toppers/hakoniwa-ecu-multiplay:${{ steps.version.outputs.VERSION }}"
