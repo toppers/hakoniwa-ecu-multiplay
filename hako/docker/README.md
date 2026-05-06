@@ -8,14 +8,14 @@
 
 - **create-image.bash** - Dockerイメージを構築するスクリプト
 - **run.bash** - Dockerコンテナを起動するスクリプト
-- **pull-image.bash** - Docker Hubからイメージをプルするスクリプト
-- **push-image.bash** - Docker Hubにイメージをプッシュするスクリプト
+- **pull-image.bash** - GitHub Container Registry (GHCR) からイメージをプルするスクリプト
+- **push-image.bash** - GHCR にイメージをプッシュするスクリプト
 - **attach.bash** - 実行中のコンテナにアタッチするスクリプト
 
 ### PowerShellスクリプト (Windows用)
 
 - **create-image.ps1** - Dockerイメージを構築するPowerShellスクリプト
-- **push-image.ps1** - Docker HubにイメージをプッシュするPowerShellスクリプト
+- **push-image.ps1** - DockerイメージをプッシュするPowerShellスクリプト（現在の実装は Linux/macOS 用スクリプトと異なり、GHCR 向けログインや `appendix/latest_version.txt` を使ったバージョンタグ付けを前提としていません）
 
 ### 設定ファイル
 
@@ -32,12 +32,24 @@
 
 ### 2. Dockerイメージの構築
 
-#### Linux/macOS
+**デフォルト:** git タグを作成すると GitHub Actions が自動的にビルド・プッシュします。以下のローカル実行は開発時のみ必要です。
+
+#### ローカルでのビルド (Linux/macOS)
+
 ```bash
 bash docker/create-image.bash
 ```
 
-#### Windows (PowerShell)
+このスクリプトは自動的に以下を実行します：
+
+- BuildKit を有効化（高速かつ効率的なビルド）
+- プラットフォームを `linux/amd64` に設定（Intel/Apple Silicon 対応）
+
+**macOS (Apple Silicon) での注意:**
+Intel ベースの環境と互換性を保つため、`linux/amd64` プラットフォームでビルドされます。
+
+#### ローカルでのビルド (Windows PowerShell)
+
 ```powershell
 .\docker\create-image.ps1
 ```
@@ -55,15 +67,24 @@ bash docker/run.bash
 
 ### 4. 実行中のコンテナにアタッチ
 
+#### 推奨: devContainer を使用
+
+VSCode で `.devcontainer/devcontainer.json` が自動的に検出されます。以下のいずれかの方法でアタッチできます：
+
+1. VSCode のコマンドパレット（Cmd/Ctrl + Shift + P）から `Dev Containers: Reopen in Container` を実行
+2. 左下の `><` アイコンをクリックして `Reopen in Container` を選択
+
+#### 代替方法: スクリプトを使用
+
 ```bash
 bash docker/attach.bash
 ```
 
-このスクリプトは実行中のコンテナを検索し、bash shellでアタッチします。
+このスクリプトは実行中のコンテナを検索し、bash shell でアタッチします。
 
 ### 5. イメージのプル
 
-Docker Hubから事前構築済みのイメージを取得：
+GitHub Container Registry (GHCR) から事前構築済みのイメージを取得：
 
 ```bash
 bash docker/pull-image.bash
@@ -81,7 +102,52 @@ bash docker/push-image.bash
 .\docker\push-image.ps1
 ```
 
-**注意**: プッシュするにはDocker Hubへのログインが必要です。
+**注意**: プッシュするには GHCR へのログインが必要です。
+
+```bash
+docker login ghcr.io
+```
+
+ログイン時には GitHub の Personal Access Token (PAT) を使用してください。
+詳細は [GitHub Container Registry ドキュメント](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) を参照してください。
+
+### 7. 自動ビルド・プッシュ (GitHub Actions)
+
+**運用方針：**
+
+- 各ブランチへの push ではコンテナイメージをビルド（GitHub Actions）
+- git タグ（`v*.*.*`）作成時のみ GHCR にプッシュしてリリース
+- PR は `main` 向けの場合のみビルド成功を確認
+- `hako/appendix/latest_version.txt` が version の source of truth
+
+**リリース手順：**
+
+1. バージョンを更新
+
+```bash
+cd hako
+echo "v1.3.0" > appendix/latest_version.txt
+git add appendix/latest_version.txt
+git commit -m "Bump version to v1.3.0"
+git push origin main
+```
+
+1. タグを作成・プッシュ（リポジトリメンテナーのみ）
+
+```bash
+git tag v1.3.0
+git push origin v1.3.0
+```
+
+1. GitHub Actions が自動実行
+
+`ghcr.io/toppers/hakoniwa-ecu-multiplay:v1.3.0` が作成・プッシュされます
+
+**注意：**
+
+- 全ブランチと PR で GitHub Actions によるビルドが自動実行されます
+- GHCR へのプッシュは `v*.*.*` タグ作成時のみ
+- タグ作成前に `latest_version.txt` と一致していることを確認してください
 
 ## Dockerイメージについて
 
