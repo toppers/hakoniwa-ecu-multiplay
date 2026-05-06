@@ -20,14 +20,13 @@
 ### 設定ファイル
 
 - **Dockerfile** - Dockerイメージの構築定義ファイル
-- **image_name.txt** - Dockerイメージ名の設定ファイル
 
 ## 使用方法
 
 ### 1. 前準備
 
 プロジェクトのルートディレクトリで実行してください。スクリプトは以下のファイルを参照します：
-- `docker/image_name.txt` - イメージ名
+- `appendix/image_name.txt` - イメージ名
 - `appendix/latest_version.txt` - バージョンタグ
 
 ### 2. Dockerイメージの構築
