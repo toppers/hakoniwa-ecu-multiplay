@@ -17,7 +17,7 @@ TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
 # Can be set via environment variable: DOCKER_BUILD_ARGS
 DOCKER_BUILD_ARGS=${DOCKER_BUILD_ARGS:-}
 
-docker build \
+docker buildx build \
   -t ${DOCKER_IMAGE} \
   -f ${DOCKER_FILE} \
   --build-arg HAKONIWA_VERSION=${IMAGE_TAG} \
