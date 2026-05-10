@@ -32,11 +32,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build base and asset images with cache
+      - name: Build base and asset images
         run: |
           set -e
           cd hako
-          export DOCKER_BUILD_ARGS="--load --cache-from type=gha --cache-to type=gha,mode=max"
+          export DOCKER_BUILD_ARGS="--load"
           bash docker/create-image.bash
 
       - name: Push images to GHCR
