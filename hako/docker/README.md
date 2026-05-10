@@ -23,6 +23,7 @@ Hakoniwa ECU Multiplay は以下の 2 層のイメージに分かれています
 - **create-image.bash** — イメージをビルド
   - `bash docker/create-image.bash` — base と asset を順番にビルド（デフォルト）
   - `bash docker/create-image.bash base` — base イメージのみ
+  - `bash docker/create-image.bash asset` — asset イメージのみ
 - **push-image.bash** — イメージを GHCR に push
   - `bash docker/push-image.bash` — base と asset を push（デフォルト）
   - `bash docker/push-image.bash base` — base のみ
@@ -63,6 +64,7 @@ bash docker/create-image.bash
 
 # または明示的に指定
 bash docker/create-image.bash base    # base のみ
+bash docker/create-image.bash asset   # asset のみ
 ```
 
 このスクリプトは自動的に以下を実行します：

@@ -50,14 +50,18 @@ case "${BUILD_TARGET}" in
 	base)
 		build_base
 		;;
+	asset)
+		build_asset
+		;;
 	both)
 		build_base
 		build_asset
 		;;
 	*)
-		echo "Usage: $0 [base|both]"
-		echo "  base  - Build base image only"
-		echo "  both  - Build both base and asset images (default)"
+		echo "Usage: $0 [base|asset|both]"
+		echo "  base   - Build base image only"
+		echo "  asset  - Build asset image only"
+		echo "  both   - Build both base and asset images (default)"
 		exit 1
 		;;
 esac
