@@ -6,7 +6,7 @@
 		"dockerfile": "Dockerfile",
 		"args": {
 			"IMAGE_REGISTRY": "ghcr.io/toppers",
-			"HAKONIWA_VERSION": "v1.2.0"
+			"TAG": "v1.3.0"
 		}
 	},
 	"features": {
@@ -31,7 +31,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "VERSION=$(cat /workspace/hako/appendix/latest_version.txt) && ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack && echo \"Using HAKONIWA version: $VERSION\""
+	// "postCreateCommand": "ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack"
 
 	// Uncomment to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],

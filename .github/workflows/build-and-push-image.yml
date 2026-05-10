@@ -32,18 +32,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build image with cache
+      - name: Build base and asset images with cache
         run: |
           set -e
           cd hako
           export DOCKER_BUILD_ARGS="--load --cache-from type=gha --cache-to type=gha,mode=max"
           bash docker/create-image.bash
-          echo "✓ Successfully built ghcr.io/toppers/hakoniwa-ecu-multiplay:$(cat appendix/latest_version.txt)"
 
-      - name: Push image to GHCR
+      - name: Push images to GHCR
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           set -e
           cd hako
           bash docker/push-image.bash
-          echo "✓ Successfully pushed ghcr.io/toppers/hakoniwa-ecu-multiplay:$(cat appendix/latest_version.txt)"
