@@ -128,7 +128,27 @@ bash docker/push-image.bash
 
 # または明示的に指定
 bash docker/push-image.bash base    # base のみ
+bash docker/push-image.bash asset   # asset のみ
+
+# Dry-run で確認（実際には push しない）
+bash docker/push-image.bash --dry-run      # 両方を確認
+bash docker/push-image.bash -n base        # base のみ確認
 ```
+
+**Dry-run オプション（推奨）:**
+
+実際に push する前に、以下のコマンドで確認できます：
+
+```bash
+bash docker/push-image.bash --dry-run
+```
+
+このコマンドで以下の情報が表示されます：
+
+- リモート先（GHCR）への接続確認
+- 認証状態の確認
+- push するイメージ情報（サイズなど）
+- 実行予定のコマンド
 
 **注意**: プッシュするには GHCR へのログインが必要です。
 
