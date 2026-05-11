@@ -75,6 +75,12 @@ verify_image() {
 	fi
 }
 
+check_remote_image() {
+	local image=$1
+	docker manifest inspect "$image" >/dev/null 2>&1
+	return $?
+}
+
 push_base() {
 	load_image_metadata
 
@@ -83,8 +89,21 @@ push_base() {
 		echo "=== DRY-RUN: Base Image ==="
 		echo "Target: ${BASE_DOCKER_TAG}"
 		verify_image ${BASE_DOCKER_TAG} || return 1
-		echo "Would execute: docker push ${BASE_DOCKER_TAG}"
+
+		if check_remote_image ${BASE_DOCKER_TAG}; then
+			echo "⚠ Image already exists on remote (would skip push)"
+		else
+			echo "✓ Image would be pushed"
+			echo "Would execute: docker push ${BASE_DOCKER_TAG}"
+		fi
 	else
+		# Check if image already exists on remote
+		if check_remote_image ${BASE_DOCKER_TAG}; then
+			echo "✗ Image already exists on remote: ${BASE_DOCKER_TAG}"
+			echo "  To overwrite, remove the image first and try again"
+			return 1
+		fi
+
 		echo "Pushing base image: ${BASE_DOCKER_TAG}"
 		docker push ${BASE_DOCKER_TAG}
 		echo "✓ Successfully pushed ${BASE_DOCKER_TAG}"
@@ -99,8 +118,21 @@ push_asset() {
 		echo "=== DRY-RUN: Asset Image ==="
 		echo "Target: ${ASSET_DOCKER_TAG}"
 		verify_image ${ASSET_DOCKER_TAG} || return 1
-		echo "Would execute: docker push ${ASSET_DOCKER_TAG}"
+
+		if check_remote_image ${ASSET_DOCKER_TAG}; then
+			echo "⚠ Image already exists on remote (would skip push)"
+		else
+			echo "✓ Image would be pushed"
+			echo "Would execute: docker push ${ASSET_DOCKER_TAG}"
+		fi
 	else
+		# Check if image already exists on remote
+		if check_remote_image ${ASSET_DOCKER_TAG}; then
+			echo "✗ Image already exists on remote: ${ASSET_DOCKER_TAG}"
+			echo "  To overwrite, remove the image first and try again"
+			return 1
+		fi
+
 		echo "Pushing asset image: ${ASSET_DOCKER_TAG}"
 		docker push ${ASSET_DOCKER_TAG}
 		echo "✓ Successfully pushed ${ASSET_DOCKER_TAG}"

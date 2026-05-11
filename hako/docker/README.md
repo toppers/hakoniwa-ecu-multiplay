@@ -148,9 +148,31 @@ bash docker/push-image.bash --dry-run
 - リモート先（GHCR）への接続確認
 - 認証状態の確認
 - push するイメージ情報（サイズなど）
+- リモートに同じバージョンが既に存在するか確認
 - 実行予定のコマンド
 
-**注意**: プッシュするには GHCR へのログインが必要です。
+#### 上書き防止機能
+
+push-image.bash は、リモート先に同じバージョン（タグ）が既に存在するかチェックしています：
+
+```bash
+# リモートに存在しない → push 実行
+bash docker/push-image.bash base
+# ✓ Image would be pushed
+
+# リモートに既に存在 → push スキップ（上書き防止）
+bash docker/push-image.bash base
+# ✗ Image already exists on remote
+# To overwrite, remove the image first and try again
+```
+
+**上書きが必要な場合**
+
+GHCR から手動でイメージバージョンを削除してから push してください。
+
+#### 注意
+
+プッシュするには GHCR へのログインが必要です。
 
 ```bash
 docker login ghcr.io
