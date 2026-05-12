@@ -31,7 +31,29 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Load image metadata
+        id: meta
+        run: |
+          source hako/docker/.env
+          echo "base_image=${IMAGE_REGISTRY}${IMAGE_NAME}:${BASE_TAG}" >> $GITHUB_OUTPUT
+          echo "asset_image=${IMAGE_REGISTRY}${IMAGE_NAME}${IMAGE_ASSET_SUFFIX}:${ASSET_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Check existing images on GHCR
+        id: check
+        run: |
+          if docker manifest inspect ${{ steps.meta.outputs.base_image }} > /dev/null 2>&1; then
+            echo "base_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "base_exists=false" >> $GITHUB_OUTPUT
+          fi
+          if docker manifest inspect ${{ steps.meta.outputs.asset_image }} > /dev/null 2>&1; then
+            echo "asset_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "asset_exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build base image
+        if: steps.check.outputs.base_exists != 'true'
         run: |
           set -e
           cd hako
@@ -39,12 +61,14 @@ jobs:
           bash docker/create-image.bash base
 
       - name: Push base image to GHCR
+        if: github.ref == 'refs/heads/main' && steps.check.outputs.base_exists != 'true'
         run: |
           set -e
           cd hako
           bash docker/push-image.bash base
 
       - name: Build asset image
+        if: steps.check.outputs.asset_exists != 'true'
         run: |
           set -e
           cd hako
@@ -52,7 +76,7 @@ jobs:
           bash docker/create-image.bash asset
 
       - name: Push asset image to GHCR
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && steps.check.outputs.asset_exists != 'true'
         run: |
           set -e
           cd hako
