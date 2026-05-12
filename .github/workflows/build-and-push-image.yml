@@ -52,19 +52,13 @@ jobs:
             echo "asset_exists=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build base image
+      - name: Build base image and Push base image to GHCR
         if: steps.check.outputs.base_exists != 'true'
         run: |
           set -e
           cd hako
           export DOCKER_BUILD_ARGS="--load"
           bash docker/create-image.bash base
-
-      - name: Push base image to GHCR
-        if: github.ref == 'refs/heads/main' && steps.check.outputs.base_exists != 'true'
-        run: |
-          set -e
-          cd hako
           bash docker/push-image.bash base
 
       - name: Build asset image
