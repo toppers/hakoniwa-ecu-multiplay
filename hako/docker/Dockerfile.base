@@ -33,7 +33,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 WORKDIR $TOPPERS_HOME
 
 ## Setup Cmake
-RUN	wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v3.31.2/cmake-3.31.2-linux-x86_64.sh && \
+RUN	sudo apt-get remove cmake -y && \
+	wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v3.31.2/cmake-3.31.2-linux-x86_64.sh && \
 	mkdir -p $CMAKE_INSTALL_DIR && \
 	sh cmake-linux.sh --skip-license --prefix=$CMAKE_INSTALL_DIR && \
 	rm cmake-linux.sh

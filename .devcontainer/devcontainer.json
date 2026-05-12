@@ -6,6 +6,7 @@
 		"dockerfile": "Dockerfile",
 		"args": {
 			"IMAGE_REGISTRY": "ghcr.io/toppers",
+			"ASSET_SUFFIX": "-demo",
 			"TAG": "v1.3.0"
 		}
 	},
@@ -22,10 +23,13 @@
 			"extensions": [
 				"ms-vscode.cpptools",
 				"ms-vscode.cpptools-extension-pack",
-				"ms-vscode.cmake-tools"
+				"ms-vscode.cmake-tools",
+				"yzhang.markdown-all-in-one",
+				"DavidAnson.vscode-markdownlint",
+				"bierner.markdown-mermaid"
 			]
 		}
-	},
+	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],

@@ -39,7 +39,6 @@ jobs:
           bash docker/create-image.bash base
 
       - name: Push base image to GHCR
-        if: github.ref == 'refs/heads/main'
         run: |
           set -e
           cd hako
