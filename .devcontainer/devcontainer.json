@@ -2,6 +2,7 @@
 	"name": "Hakoniwa ECU Multiplay (Community)",
 
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+	// "image": "ghcr.io/toppers/hakoniwa-ecu-multiplay-demo:v1.3.0",
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
@@ -13,6 +14,7 @@
 	"features": {
 		"docker-in-docker": "latest"
 	},
+
 	// VS Code specific customizations
 	"customizations": {
 		"vscode": {
@@ -29,13 +31,13 @@
 				"bierner.markdown-mermaid"
 			]
 		}
-	}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack"
+	"postCreateCommand": "bash hako/utils/setup-rtegen.bash"
 
 	// Uncomment to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
