@@ -37,7 +37,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash hako/utils/setup-rtegen.bash"
+	"postCreateCommand": "bash hako/utils/setup-rtegen.bash && bash hako/utils/setup-atk2.bash"
 
 	// Uncomment to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
