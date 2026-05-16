@@ -47,17 +47,17 @@ proxy --> |ROS2 topic| monitor
 ## ATK2 Sample1のビルド方法
 
 ```
-cd ~/workspace/atk2-sc1/
-mkdir OBJ ;cd OBJ
+mkdir -p /workspaces/hakoniwa-ecu-multiplay/atk2-sc1/OBJ ;cd /workspaces/hakoniwa-ecu-multiplay/atk2-sc1/OBJ
 ../configure -T hsbrh850f1k_gcc
-cp /home/toppers/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+cp /home/hako/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 make
 
 ```
 
 ## athrillを使ったATK2の実行方法
 ```
-# athrill2 -c1 -i -d device_config.txt -m memory.txt atk2-sc1
+athrill2 -c1 -i -d device_config.txt -m memory.txt atk2-sc1
+
 core id num=1
 ROM : START=0x0 SIZE=1024
 RAM : START=0xfede8000 SIZE=512
@@ -80,54 +80,42 @@ Input Command:
 
 ## A-COMSTACKを使ったCAN通信の例 : ビルド方法
 ```
-cd ~/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
-cp /home/toppers/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+cd /workspaces/hakoniwa-ecu-multiplay/a-comstack/can/target/hsbrh850f1k_gcc/sample/
+cp /home/hako/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 make can
 make
 ```
 
 ## A-COMSTACKを使ったCAN通信の例 : 実行方法
-### ターミナル１(ROS Master)
+※ 既存コンテナで `ros2: command not found` が出る場合は、初回のみ以下を実行してください。
 ```
-# mnt/master/ros-master.bash 
-... logging to /root/.ros/log/a9400e2e-05b3-11ed-bf83-000d3ac8da62/roslaunch-codespaces-4a7fa1-8259.log
-Checking log directory for disk usage. This may take a while.
-Press Ctrl-C to interrupt
-Done checking log file disk usage. Usage is <1GB.
-
-started roslaunch server http://codespaces-4a7fa1:41219/
-ros_comm version 1.14.13
-
-
-SUMMARY
-========
-
-PARAMETERS
- * /rosdistro: melodic
- * /rosversion: 1.14.13
-
-NODES
-
-auto-starting new master
-process[master]: started with pid [8307]
-ROS_MASTER_URI=http://codespaces-4a7fa1:11311/
-
-setting /run_id to a9400e2e-05b3-11ed-bf83-000d3ac8da62
-process[rosout-1]: started with pid [8326]
-started core service [/rosout]
+sudo apt-get update
+sudo apt-get install -y ros-foxy-ros2cli ros-foxy-ros2topic ros-foxy-std-msgs
 ```
 
-### ターミナル２ (ROS TOPIC)
-- Step1 running rostopic
+### ターミナル１(ROS 2環境の有効化)
 ```
 source /opt/ros/foxy/setup.bash
-rostopic echo /channel0/CAN_IDE0_RTR0_DLC8_0x001
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x001] does not appear to be published yet
+ros2 daemon start
+```
+
+### ターミナル１補足（Hako-Master の起動）
+`ros2 daemon` とは別に、mROS の master 通信用に `hako-master` を起動してください。
+```
+cd /workspaces/hakoniwa-ecu-multiplay/athrill-target-rh850f1x/hakoniwa-core-cpp-client/core/bin
+./hako-master 100 100
+```
+`ros2 topic echo` が動いていても、`hako-master` が起動していないと Athrill 側は master に登録できません。
+
+### ターミナル２ (ROS TOPIC)
+- Step1 running ros2 topic
+```
+source /opt/ros/foxy/setup.bash
+ros2 topic echo /channel0/CAN_IDE0_RTR0_DLC8_0x001 std_msgs/msg/String
 ```
 
 - Step2 CAN logging after run can application
 ```
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x001] does not appear to be published yet
 data: "\x01\x02\x03\x04\x05\x06\a\b"
 ---
 data: "\x02\x03\x04\x05\x06\a\b\t"
@@ -146,6 +134,21 @@ data: "\b\t\n\v\f\r\x0E\x0F"
 ---
 data: "\t\n\v\f\r\x0E\x0F\x10"
 ```
+
+- Troubleshooting: Athrillで `mros_comm_tcp_server_bind() ... ret=-1` が出る場合
+```
+# ポート競合確認（ros2 daemon が 11511 を掴むケースあり）
+netstat -lntp 2>/dev/null | grep -E ':(11411|11511)\b'
+
+# ros2 daemon 停止（確認用）
+source /opt/ros/foxy/setup.bash
+ros2 daemon stop
+```
+
+`a-comstack/can/target/hsbrh850f1k_gcc/sample/device_config_with_can.txt` では、
+`DEBUG_FUNC_MROS_MASTER_IPADDR` を接続可能なIP（同一コンテナなら `127.0.0.1`）に設定し、
+`DEBUG_FUNC_MROS_SLAVE_PORT_NO` / `DEBUG_FUNC_MROS_PUBLISHER_PORT_NO` を競合しない値（例: `21411` / `21511`）に変更してください。
+`0.0.0.0` は待受用のアドレスで、接続先としては使えません。
 
 ### ターミナル３ (CAN Application using TOPPERS Automotive Stacks)
 - Step1 Run athrill

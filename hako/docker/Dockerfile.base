@@ -19,6 +19,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	unzip \
 	git \
 	ruby \
+	ros-foxy-ros2cli \
+	ros-foxy-ros2topic \
+	ros-foxy-std-msgs \
 	# libc6-dev libstdc++-9-dev \
 	# libssl-dev libreadline-dev zlib1g-dev \
 	# autoconf \
@@ -85,8 +88,8 @@ RUN wget https://github.com/mitsut/cfg/releases/download/1.9.7/cfg-1.9.7-x86_64-
 	unzip AUTOSAR_MMOD_XMLSchema.zip -d schema && \
 	rm cfg-1.9.7-x86_64-unknown-linux-gnu.tar.gz AUTOSAR_MMOD_XMLSchema.zip
 
-ENV PATH="/home/hako/.cargo/bin:/usr/local/athrill-gcc/bin:$TOPPERS_HOME/athrill-target-rh850f1x/athrill/bin/linux: \
-	$TOPPERS_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-master: \
-	$TOPPERS_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-cmd:  \
-	$TOPPERS_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy: \
+ENV PATH="/home/hako/.cargo/bin:/usr/local/athrill-gcc/bin:$HAKO_HOME/athrill-target-rh850f1x/athrill/bin/linux: \
+	$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-master: \
+	$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-cmd:  \
+	$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy: \
 	${PATH}"
