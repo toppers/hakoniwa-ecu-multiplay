@@ -11,9 +11,6 @@
 			"TAG": "v1.3.0"
 		}
 	},
-	"features": {
-		"docker-in-docker": "latest"
-	},
 
 	// VS Code specific customizations
 	"customizations": {
