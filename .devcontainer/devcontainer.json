@@ -2,16 +2,19 @@
 	"name": "Hakoniwa ECU Multiplay (Community)",
 
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+	// "image": "ghcr.io/toppers/hakoniwa-ecu-multiplay-demo:v1.3.0",
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
 			"IMAGE_REGISTRY": "ghcr.io/toppers",
-			"HAKONIWA_VERSION": "v1.2.0"
+			"ASSET_SUFFIX": "-demo",
+			"TAG": "v1.3.0"
 		}
 	},
 	"features": {
 		"docker-in-docker": "latest"
 	},
+
 	// VS Code specific customizations
 	"customizations": {
 		"vscode": {
@@ -22,7 +25,10 @@
 			"extensions": [
 				"ms-vscode.cpptools",
 				"ms-vscode.cpptools-extension-pack",
-				"ms-vscode.cmake-tools"
+				"ms-vscode.cmake-tools",
+				"yzhang.markdown-all-in-one",
+				"DavidAnson.vscode-markdownlint",
+				"bierner.markdown-mermaid"
 			]
 		}
 	},
@@ -31,7 +37,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "VERSION=$(cat /workspace/hako/appendix/latest_version.txt) && ln -s /home/hako/workspace/a-rtegen a-rtegen && ln -s /home/hako/workspace/atk2-sc1 atk2-sc1 && ln -s /home/hako/workspace/a-comstack a-comstack && echo \"Using HAKONIWA version: $VERSION\""
+	"postCreateCommand": "bash hako/utils/setup-rtegen.bash"
 
 	// Uncomment to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
 	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],

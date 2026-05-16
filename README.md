@@ -3,6 +3,28 @@
 複数の車載ECUを箱庭（仮想シミュレーション）環境で動作させるための環境です。
 以下では、2つのECU間でCAN通信を行う
 
+## 目次
+
+- [hakoniwa-ecu-multiplay](#hakoniwa-ecu-multiplay)
+  - [目次](#目次)
+  - [ECU間通信の例（C++版箱庭コア機能）](#ecu間通信の例c版箱庭コア機能)
+    - [仮想ランタイム環境とCANデータの流れ](#仮想ランタイム環境とcanデータの流れ)
+  - [使用する環境変数](#使用する環境変数)
+  - [ATK2 Sample1のビルド方法](#atk2-sample1のビルド方法)
+    - [athrillを使ったATK2の実行方法](#athrillを使ったatk2の実行方法)
+  - [A-RTEGEN の HelloWorldWithCOM を使った例（ビルド）](#a-rtegen-の-helloworldwithcom-を使った例ビルド)
+    - [ECU1（送信側）のビルド](#ecu1送信側のビルド)
+    - [ECU2（受信側）のビルド](#ecu2受信側のビルド)
+  - [A-RTEGEN の HelloWorldWithCOM を使った例（実行）](#a-rtegen-の-helloworldwithcom-を使った例実行)
+    - [ターミナル1(hako-master)](#ターミナル1hako-master)
+    - [ターミナル2(ECU1)](#ターミナル2ecu1)
+    - [ターミナル3(ECU2)](#ターミナル3ecu2)
+    - [ターミナル4(hako-cmd)](#ターミナル4hako-cmd)
+  - [A-COMSTACKを使ったCAN通信の例 : ビルド方法](#a-comstackを使ったcan通信の例--ビルド方法)
+  - [A-COMSTACKを使ったCAN通信の例 : 実行方法](#a-comstackを使ったcan通信の例--実行方法)
+    - [ターミナル２ (ROS TOPIC)](#ターミナル２-ros-topic)
+    - [ターミナル３ (CAN Application using TOPPERS Automotive Stacks)](#ターミナル３-can-application-using-toppers-automotive-stacks)
+
 ## ECU間通信の例（C++版箱庭コア機能）
 詳細手順はTOPPERS活用アイデア・アプリケーション開発コンテストの[ドキュメント](https://www.toppers.jp/docs/contest/2022/A01_mori.pdf)を参照（）
 
@@ -44,20 +66,29 @@ proxy --> |ROS2 topic| monitor
 
 ```
 
+
+## 使用する環境変数
+
+```
+HAKO_WS_ECU1="a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1"
+HAKO_WS_ECU2="a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu2"
+HAKO_WS_CAN="a-comstack/can/target/hsbrh850f1k_gcc/sample"
+```
+
 ## ATK2 Sample1のビルド方法
 
 ```
-cd ~/workspace/atk2-sc1/
-mkdir OBJ ;cd OBJ
+mkdir -p /workspaces/hakoniwa-ecu-multiplay/atk2-sc1/OBJ ;cd /workspaces/hakoniwa-ecu-multiplay/atk2-sc1/OBJ
 ../configure -T hsbrh850f1k_gcc
-cp /home/toppers/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+cp /home/hako/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 make
 
 ```
 
-## athrillを使ったATK2の実行方法
+### athrillを使ったATK2の実行方法
 ```
-# athrill2 -c1 -i -d device_config.txt -m memory.txt atk2-sc1
+athrill2 -c1 -i -d device_config.txt -m memory.txt atk2-sc1
+
 core id num=1
 ROM : START=0x0 SIZE=1024
 RAM : START=0xfede8000 SIZE=512
@@ -78,56 +109,100 @@ TOPPERS/ATK2-SC1 Release 1.4.2 for HSBRH850F1K (Jul 17 2022, 09:27:45)
 Input Command:
 ```
 
-## A-COMSTACKを使ったCAN通信の例 : ビルド方法
+
+## A-RTEGEN の HelloWorldWithCOM を使った例（ビルド）
+
+### ECU1（送信側）のビルド
 ```
-cd ~/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
-cp /home/toppers/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+cd $HAKO_WS_ECU1
+bash configure.sh
+make
+cp /home/hako/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+sed -i -e "s|/root|/home/hako|g" memory_with_hako.txt
+```
+
+### ECU2（受信側）のビルド
+```
+cd $HAKO_WS_ECU2
+bash configure.sh
+make
+cp /home/hako/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
+sed -i -e "s|/root|/home/hako|g" memory_with_hako.txt
+```
+
+## A-RTEGEN の HelloWorldWithCOM を使った例（実行）
+
+### ターミナル1(hako-master)
+次のコマンドを実行し待機状態とする
+```
+$ hako-master 100 200
+START
+```
+### ターミナル2(ECU1)
+```
+cd $HAKO_WS_ECU1
+$ hako-proxy ./proxy_config_rte_ecu1.json
+add_option:/home/hako/athrill-target-rh850f1x/athrill/bin/linux/athrill2
+add_option:-c1
+add_option:-t
+add_option:-1
+add_option:-d
+add_option:device_config_with_rte_hako_ecu1.txt
+add_option:-m
+add_option:memory_with_hako.txt
+add_option:atk2-sc1
+INFO: PROXY start
+```
+### ターミナル3(ECU2)
+```
+cd $HAKO_WS_ECU2
+$ hako-proxy ./proxy_config_rte_ecu2.json
+add_option:/home/hako/athrill-target-rh850f1x/athrill/bin/linux/athrill2
+add_option:-c1
+add_option:-t
+add_option:-1
+add_option:-d
+add_option:device_config_with_rte_hako_ecu2.txt
+add_option:-m
+add_option:memory_with_hako.txt
+add_option:atk2-sc1
+INFO: PROXY start
+```
+
+### ターミナル4(hako-cmd)
+```
+$ hako-cmd start
+```
+
+
+## A-COMSTACKを使ったCAN通信の例 : ビルド方法
+
+```
+cd $HAKO_WS_CAN/
+cp /home/hako/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
 make can
 make
 ```
 
 ## A-COMSTACKを使ったCAN通信の例 : 実行方法
-### ターミナル１(ROS Master)
+
 ```
-# mnt/master/ros-master.bash 
-... logging to /root/.ros/log/a9400e2e-05b3-11ed-bf83-000d3ac8da62/roslaunch-codespaces-4a7fa1-8259.log
-Checking log directory for disk usage. This may take a while.
-Press Ctrl-C to interrupt
-Done checking log file disk usage. Usage is <1GB.
+$ source /opt/ros/foxy/setup.bash
+$ ros2 daemon start
+The daemon has been started
 
-started roslaunch server http://codespaces-4a7fa1:41219/
-ros_comm version 1.14.13
-
-
-SUMMARY
-========
-
-PARAMETERS
- * /rosdistro: melodic
- * /rosversion: 1.14.13
-
-NODES
-
-auto-starting new master
-process[master]: started with pid [8307]
-ROS_MASTER_URI=http://codespaces-4a7fa1:11311/
-
-setting /run_id to a9400e2e-05b3-11ed-bf83-000d3ac8da62
-process[rosout-1]: started with pid [8326]
-started core service [/rosout]
+$ hako-master 100 100
 ```
 
 ### ターミナル２ (ROS TOPIC)
-- Step1 running rostopic
+- Step1 running ros2 topic
 ```
 source /opt/ros/foxy/setup.bash
-rostopic echo /channel0/CAN_IDE0_RTR0_DLC8_0x001
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x001] does not appear to be published yet
+ros2 topic echo /channel0/CAN_IDE0_RTR0_DLC8_0x001 std_msgs/msg/String
 ```
 
 - Step2 CAN logging after run can application
 ```
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x001] does not appear to be published yet
 data: "\x01\x02\x03\x04\x05\x06\a\b"
 ---
 data: "\x02\x03\x04\x05\x06\a\b\t"
@@ -148,9 +223,10 @@ data: "\t\n\v\f\r\x0E\x0F\x10"
 ```
 
 ### ターミナル３ (CAN Application using TOPPERS Automotive Stacks)
+
 - Step1 Run athrill
 ```
-cd ~/workspace/a-comstack/can/target/hsbrh850f1k_gcc/sample/
+cd $HAKO_WS_CAN
 athrill2 -c1 -i -d device_config_with_can.txt -m memory.txt atk2-sc1.exe
 core id num=1
 ROM : START=0x0 SIZE=1024
@@ -166,25 +242,17 @@ DEBUG_FUNC_MROS_TOPIC_SUB_0 = channel0/CAN_IDE0_RTR0_DLC8_0x123
 DEBUG_FUNC_MROS_TOPIC_SUB_1 = channel0/CAN_IDE0_RTR0_DLC8_0x122
 DEBUG_FUNC_MROS_TOPIC_SUB_2 = channel0/CAN_IDE0_RTR0_DLC8_0x003
 DEBUG_FUNC_MROS_TOPIC_SUB_3 = channel0/CAN_IDE0_RTR0_DLC8_0x004
+DEBUG_FUNC_MROS_MASTER_IPADDR = 127.0.0.1
+mros_master_ipaddr=127.0.0.1
+mros_slave_port_no=21411
+mros_uri_slave=http://127.0.0.1:21411
+mros_publisher_port_no=21511
 DEBUG_FUNC_FT_LOG_SIZE=1024
-mros_master_ipaddr=0.0.0.0
-mros_slave_port_no=11411
-mros_uri_slave=http://127.0.0.1:11411
-mros_publisher_port_no=11511
-[DBG>**********mROS main task start**********
+**********mROS main task start**********
 
+[DBG>
 HIT break:0x0
 [NEXT> pc=0x0 prc_support.S 256
-**********mROS Main task finish**********
-DEBUG_FUNC_MROS_NODE_NAME = athrill_test_node
-**********mROS pub task start**********
-**********mROS pub task start**********
-**********mROS pub task start**********
-**********mROS pub task start**********
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x123] does not appear to be published yet
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x122] does not appear to be published yet
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x003] does not appear to be published yet
-WARNING: topic [/channel0/CAN_IDE0_RTR0_DLC8_0x004] does not appear to be published yet
 ```
 - Step2 Continue Athrill simulation and run CAN application
 ```
@@ -207,21 +275,4 @@ DATA[7]:0x7
 
 == finished SendTask ==
 == CanIf_TxConfirmation(3) ==
-```
-
-## A-RTEGENの HelloWorldWithCOMを使った例
-- ECU1（送信側）のビルド
-```
-cd ~/workspace/a-rtegen/sample/sc1/HelloAutosarWithCom/hsbrh850f1k_gcc/ecu1
-bash configure.sh
-make
-cp /root/athrill-target-rh850f1x/params/rh850f1k/atk2-sc1/* .
-```
-- device_config_with_can.txtを修正
-```
-DEBUG_FUNC_MROS_TOPIC_PUB_0 channel0/CAN_IDE0_RTR0_DLC4_0x002
-```
-- athrillの実行
-```
-athrill2 -c1 -i -d device_config_with_can.txt -m memory.txt atk2-sc1
 ```
