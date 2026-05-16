@@ -62,6 +62,13 @@ case "${BUILD_TARGET}" in
 		echo "  base   - Build base image only"
 		echo "  asset  - Build asset image only"
 		echo "  both   - Build both base and asset images (default)"
+		echo ""
+		echo "Examples:"
+		echo "  $0"
+		echo "  $0 base"
+		echo "  $0 asset"
+		echo "  DOCKER_BUILD_ARGS='--no-cache' $0               # Force full rebuild (ignore cache)"
+		echo "  DOCKER_BUILD_ARGS='--no-cache --pull' $0        # Force full rebuild + pull latest base image"
 		exit 1
 		;;
 esac

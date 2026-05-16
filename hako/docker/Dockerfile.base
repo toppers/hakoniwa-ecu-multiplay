@@ -19,14 +19,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	unzip \
 	git \
 	ruby \
-	ros-foxy-ros2cli \
-	ros-foxy-ros2topic \
-	ros-foxy-std-msgs \
-	# libc6-dev libstdc++-9-dev \
-	# libssl-dev libreadline-dev zlib1g-dev \
-	# autoconf \
-	# automake \
-	# pkg-config \
 	net-tools \
 	openjdk-8-jre \
 	&& apt-get clean \
@@ -70,7 +62,9 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
 #  Build Athrill2 (includes hakoniwa-core-cpp-client as submodule)
 RUN git clone -b master --recursive https://github.com/toppers/athrill-target-rh850f1x && \
 	cd  athrill-target-rh850f1x && \
-	bash build.bash all || (echo "Athrill2 build failed" && exit 1)
+	bash build.bash all || (echo "Athrill2 build failed" && exit 1) && \
+	cd hakoniwa-core-cpp-client && \
+	bash install.bash || (echo "hakoniwa-core-cpp-client build failed" && exit 1)
 
 #  Build athrill-device
 RUN git clone https://github.com/toppers/athrill-device && \
@@ -78,6 +72,12 @@ RUN git clone https://github.com/toppers/athrill-device && \
 	cd athrill-target-rh850f1x/athrill-device/device/hakotime && \
 	ln -s ../../../hakoniwa-core-cpp-client && \
 	bash build.bash || (echo "athrill-device build failed" && exit 1)
+
+# Ensure hakoniwa mmap directory is writable for non-root runtime.
+USER root
+RUN mkdir -p /var/lib/hakoniwa/mmap && \
+	chown $USERNAME:$GROUPNAME /var/lib/hakoniwa/mmap
+USER $USERNAME
 
 # Setup cfg tool and AUTOSAR XML schema (required by assets layered on top of this image)
 RUN wget https://github.com/mitsut/cfg/releases/download/1.9.7/cfg-1.9.7-x86_64-unknown-linux-gnu.tar.gz && \
@@ -88,8 +88,4 @@ RUN wget https://github.com/mitsut/cfg/releases/download/1.9.7/cfg-1.9.7-x86_64-
 	unzip AUTOSAR_MMOD_XMLSchema.zip -d schema && \
 	rm cfg-1.9.7-x86_64-unknown-linux-gnu.tar.gz AUTOSAR_MMOD_XMLSchema.zip
 
-ENV PATH="/home/hako/.cargo/bin:/usr/local/athrill-gcc/bin:$HAKO_HOME/athrill-target-rh850f1x/athrill/bin/linux: \
-	$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-master: \
-	$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-cmd:  \
-	$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy: \
-	${PATH}"
+ENV PATH="/home/hako/.cargo/bin:/usr/local/athrill-gcc/bin:$HAKO_HOME/athrill-target-rh850f1x/athrill/bin/linux:$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-master:$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/core/sample/base-procs/hako-cmd:$HAKO_HOME/athrill-target-rh850f1x/hakoniwa-core-cpp-client/cmake-build/src/proxy:${PATH}"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HAKONIWA_TOP_DIR=`pwd`
+HAKONIWA_TOP_DIR=$(cd "$(dirname "$0")/../.." && pwd)
 IMAGE_NAME=`cat appendix/image_name.txt`
 IMAGE_TAG=`cat appendix/latest_version.txt`
 DOCKER_IMAGE=${IMAGE_NAME}:${IMAGE_TAG}
@@ -37,14 +37,14 @@ fi
 
 if [ ${OS_TYPE} != "Mac" ]
 then
-docker run -v ${HAKONIWA_TOP_DIR}:/home/hako/workspace/hakoniwa-ecu-multiplay \
+docker run -v ${HAKONIWA_TOP_DIR}:/workspaces/hakoniwa-ecu-multiplay \
 	-it --rm \
 	--net host \
 	-e CORE_IPADDR=${IPADDR} \
 	-e OS_TYPE=${OS_TYPE} \
 	--name hakoniwa-ecu-multiplay ${DOCKER_IMAGE} 
 else
-docker run -v ${HAKONIWA_TOP_DIR}:/home/hako/workspace/hakoniwa-ecu-multiplay \
+docker run -v ${HAKONIWA_TOP_DIR}:/workspaces/hakoniwa-ecu-multiplay \
 	-it --rm \
 	--ip ${IPADDR} -p 10000:10000 \
 	-e CORE_IPADDR=${IPADDR} \
