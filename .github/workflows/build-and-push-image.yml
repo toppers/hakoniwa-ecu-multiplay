@@ -75,3 +75,35 @@ jobs:
           set -e
           cd hako
           bash docker/push-image.bash asset
+
+  create-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Load image metadata
+        id: meta
+        run: |
+          source hako/docker/.env
+          echo "base_image=${IMAGE_REGISTRY}${IMAGE_NAME}:${BASE_TAG}" >> $GITHUB_OUTPUT
+          echo "asset_image=${IMAGE_REGISTRY}${IMAGE_NAME}${IMAGE_ASSET_SUFFIX}:${ASSET_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "${{ github.ref_name }}" \
+            --notes "## Docker Images
+
+          | Image | Tag |
+          |-------|-----|
+          | \`${{ steps.meta.outputs.base_image }}\` | \`${{ github.ref_name }}\` |
+          | \`${{ steps.meta.outputs.asset_image }}\` | \`${{ github.ref_name }}\` |" \
+            --verify-tag
