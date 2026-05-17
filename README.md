@@ -1,5 +1,9 @@
 # hakoniwa-ecu-multiplay
 
+[![Build and Push Container Image](https://github.com/toppers/hakoniwa-ecu-multiplay/actions/workflows/build-and-push-image.yml/badge.svg)](https://github.com/toppers/hakoniwa-ecu-multiplay/actions/workflows/build-and-push-image.yml)
+[![ghcr.io (base)](https://img.shields.io/badge/ghcr.io-hakoniwa--ecu--multiplay-blue?logo=docker)](https://github.com/toppers/hakoniwa-ecu-multiplay/pkgs/container/hakoniwa-ecu-multiplay)
+[![ghcr.io (demo)](https://img.shields.io/badge/ghcr.io-hakoniwa--ecu--multiplay--demo-blue?logo=docker)](https://github.com/toppers/hakoniwa-ecu-multiplay/pkgs/container/hakoniwa-ecu-multiplay-demo)
+
 複数の車載ECUを箱庭（仮想シミュレーション）環境で動作させるための環境です。
 以下では、2つのECU間でCAN通信を行う
 
